@@ -1,5 +1,9 @@
 package com.rank.assignment.controller;
 
+import com.rank.assignment.dto.request.NewTransactionRequestDto;
+import com.rank.assignment.dto.response.LastTenTransactionsResponseDto;
+import com.rank.assignment.dto.response.NewPlayerResponseDto;
+import com.rank.assignment.dto.response.NewTransactionResponseDto;
 import com.rank.assignment.model.Player;
 import com.rank.assignment.model.Transaction;
 import com.rank.assignment.respository.PlayerRepository;
@@ -26,22 +30,23 @@ public class PlayerController {
     }
 
     @GetMapping("/player/{playerId}/balance")
-    public ResponseEntity<Map> getPlayer(@PathVariable("playerId") int playerId) {
+    public ResponseEntity<NewPlayerResponseDto> getPlayer(@PathVariable("playerId") int playerId) {
         Player player = playerRepository.findPlayerById(playerId);
         if (null == player) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("playerId", player.getId());
-        responseMap.put("balance", player.getBalance());
+        NewPlayerResponseDto newPlayerResponseDto = new NewPlayerResponseDto(player.getId(), player.getBalance());
 
 
-        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+        return new ResponseEntity<>(newPlayerResponseDto, HttpStatus.OK);
     }
 
     @PostMapping("/player/{playerId}/balance/update")
-    public ResponseEntity<Map> newTransaction(@PathVariable("playerId") int playerId, @RequestBody double amount, @RequestBody String transactionType) {
+    public ResponseEntity<NewTransactionResponseDto> newTransaction(@PathVariable("playerId") int playerId, @RequestBody NewTransactionRequestDto newTransactionRequestDto) {
+
+        double amount = newTransactionRequestDto.getAmount();
+        String transactionType = newTransactionRequestDto.getTransactionType();
 
         if (amount < 0) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -55,35 +60,32 @@ public class PlayerController {
 
         if (transactionType.equals("win")) {
             double newbalance = playerdata.getBalance() + amount;
-            System.out.println("newbalance: [win] : " + newbalance);
+//            System.out.println("newbalance: [win] : " + newbalance);
             playerdata.setBalance(newbalance);
         } else if (transactionType.equals("wager")) {
             if (playerdata.getBalance() < amount) {
                 return new ResponseEntity<>(HttpStatus.I_AM_A_TEAPOT);
             }
             double newbalance = playerdata.getBalance() - amount;
-            System.out.println("newbalance: [wager] : " + newbalance);
+//            System.out.println("newbalance: [wager] : " + newbalance);
             playerdata.setBalance(newbalance);
         }
 
         playerRepository.save(playerdata);
-        Transaction newTransaction = transactionRepository.save(new Transaction(0, transactionType, amount, playerId));
+        Transaction newTransaction = transactionRepository.save(new Transaction(transactionType, amount, playerId));
 
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("transactionId", newTransaction.getTransactionId());
-        responseMap.put("balance", playerdata.getBalance());
+        NewTransactionResponseDto newTransactionResponseDto = new NewTransactionResponseDto(newTransaction.getTransactionId(), playerdata.getBalance());
 
-        return new ResponseEntity<>(responseMap, HttpStatus.OK);
+        return new ResponseEntity<>(newTransactionResponseDto, HttpStatus.OK);
     }
 
     @PostMapping("/admin/player/transactions")
-    public ResponseEntity<List<Map>> getLastTenTransactions(@RequestParam() String name) {
+    public ResponseEntity<List<LastTenTransactionsResponseDto>> getLastTenTransactions(@RequestParam() String userName) {
         try {
 
-            List<Map> transactionData = new ArrayList<>();
             List<Transaction> transactionList = new ArrayList<>();
 
-            Player player = playerRepository.findByUsername(name);
+            Player player = playerRepository.findByUsername(userName);
             if (null == player) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
@@ -92,22 +94,20 @@ public class PlayerController {
             if (transactionList.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } else {
-                for (Transaction transaction : transactionList) {
-                    transactionData.add(convertTransactionToMap(transaction));
-                }
 
-                return new ResponseEntity<>(transactionData, HttpStatus.OK);
+                return new ResponseEntity<>(getLastTenTransactionsResponseDtos(transactionList), HttpStatus.OK);
             }
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    private Map<String, Object> convertTransactionToMap(Transaction transaction) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("transactionId", transaction.getTransactionId());
-        map.put("transactionType", transaction.getTransactionType());
-        map.put("amount", transaction.getAmount());
-        return map;
+
+    private List<LastTenTransactionsResponseDto> getLastTenTransactionsResponseDtos(List<Transaction> transactionList) {
+        List<LastTenTransactionsResponseDto> dtos = new ArrayList<>();
+        for (Transaction transaction : transactionList) {
+            dtos.add(new LastTenTransactionsResponseDto(transaction.getTransactionId(), transaction.getTransactionType(), transaction.getAmount()));
+        }
+        return dtos;
     }
 
 }

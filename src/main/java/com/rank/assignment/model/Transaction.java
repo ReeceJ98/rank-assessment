@@ -16,7 +16,9 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "transactionId")
     private int transactionId;
+
 
     @Column(name = "transactionType")
     private String transactionType;
@@ -27,5 +29,9 @@ public class Transaction {
     @Column(name = "playerId")
     private long playerId;
 
-
+    public Transaction(String transactionType, double amount, long playerId) {
+        this.transactionType = transactionType;
+        this.amount = amount;
+        this.playerId = playerId;
+    }
 }

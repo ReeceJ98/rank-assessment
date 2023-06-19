@@ -1,11 +1,10 @@
 package com.rank.assignment.respository;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.rank.assignment.model.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 

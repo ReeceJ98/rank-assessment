@@ -16,7 +16,9 @@ public class Player {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private int id;
+
 
     @Column(name = "username")
     private String username;
