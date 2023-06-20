@@ -32,13 +32,12 @@ public class PlayerController {
     @GetMapping("/player/{playerId}/balance")
     public ResponseEntity<NewPlayerResponseDto> getPlayer(@PathVariable("playerId") int playerId) {
         Player player = playerRepository.findPlayerById(playerId);
+
         if (null == player) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         NewPlayerResponseDto newPlayerResponseDto = new NewPlayerResponseDto(player.getId(), player.getBalance());
-
-
         return new ResponseEntity<>(newPlayerResponseDto, HttpStatus.OK);
     }
 
@@ -73,7 +72,6 @@ public class PlayerController {
 
         playerRepository.save(playerdata);
         Transaction newTransaction = transactionRepository.save(new Transaction(transactionType, amount, playerId));
-
         NewTransactionResponseDto newTransactionResponseDto = new NewTransactionResponseDto(newTransaction.getTransactionId(), playerdata.getBalance());
 
         return new ResponseEntity<>(newTransactionResponseDto, HttpStatus.OK);
@@ -82,19 +80,19 @@ public class PlayerController {
     @PostMapping("/admin/player/transactions")
     public ResponseEntity<List<LastTenTransactionsResponseDto>> getLastTenTransactions(@RequestParam() String userName) {
         try {
-
             List<Transaction> transactionList = new ArrayList<>();
 
             Player player = playerRepository.findByUsername(userName);
+
             if (null == player) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
+
             transactionList = transactionRepository.findLastTenTransactions(player.getId());
 
             if (transactionList.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             } else {
-
                 return new ResponseEntity<>(getLastTenTransactionsResponseDtos(transactionList), HttpStatus.OK);
             }
         } catch (Exception e) {

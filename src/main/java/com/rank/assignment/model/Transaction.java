@@ -19,7 +19,6 @@ public class Transaction {
     @Column(name = "transactionId")
     private int transactionId;
 
-
     @Column(name = "transactionType")
     private String transactionType;
 

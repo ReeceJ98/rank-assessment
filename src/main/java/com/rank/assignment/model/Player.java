@@ -19,12 +19,10 @@ public class Player {
     @Column(name = "id")
     private int id;
 
-
     @Column(name = "username")
     private String username;
 
     @Column(name = "balance")
     private double balance;
-
 
 }

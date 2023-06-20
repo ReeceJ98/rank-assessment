@@ -1301,3 +1301,6 @@ org.h2.jdbc.JdbcSQLSyntaxErrorException: Column "player_id" not found [42122-214
 2023-06-19 20:52:17 jdbc[3]: exception
 org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "player_id"; SQL statement:
 SELECT 'transaction_id', 'transaction_type', 'amount'  FROM TRANSACTION WHERE 'player_id' = ? ORDER BY TRANSACTION_ID DESC LIMIT 10 [22018-214]
+2023-06-20 17:02:17 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "TRANSACTIONS" not found; SQL statement:
+DELETE FROM TRANSACTIONS WHERE TRANSACTION_ID = 1569 [42102-214]

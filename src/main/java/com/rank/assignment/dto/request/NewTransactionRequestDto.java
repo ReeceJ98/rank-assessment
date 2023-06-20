@@ -1,8 +1,6 @@
 package com.rank.assignment.dto.request;
 
-
 import lombok.Getter;
-
 import java.io.Serializable;
 
 @Getter
