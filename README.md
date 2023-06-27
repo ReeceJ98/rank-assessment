@@ -1,4 +1,6 @@
-To run application: 
+To run application:
+gradle bootRun
+
 
 H2 database console:
 http://localhost:8080/h2-ui/

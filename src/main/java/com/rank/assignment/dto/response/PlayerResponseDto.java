@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Getter
 @AllArgsConstructor
-public class NewPlayerResponseDto implements Serializable {
+public class PlayerResponseDto implements Serializable {
     int playerId;
     double balance;
 }

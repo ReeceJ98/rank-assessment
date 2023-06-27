@@ -2,7 +2,7 @@ package com.rank.assignment.controller;
 
 import com.rank.assignment.dto.request.NewTransactionRequestDto;
 import com.rank.assignment.dto.response.LastTenTransactionsResponseDto;
-import com.rank.assignment.dto.response.NewPlayerResponseDto;
+import com.rank.assignment.dto.response.PlayerResponseDto;
 import com.rank.assignment.dto.response.NewTransactionResponseDto;
 import com.rank.assignment.model.Player;
 import com.rank.assignment.model.Transaction;
@@ -29,19 +29,19 @@ public class PlayerController {
         return new ResponseEntity<>(playerRepository.save(player), HttpStatus.OK);
     }
 
-    @GetMapping("/player/{playerId}/balance")
-    public ResponseEntity<NewPlayerResponseDto> getPlayer(@PathVariable("playerId") int playerId) {
+    @GetMapping("/{playerId}/balance")
+    public ResponseEntity<PlayerResponseDto> getPlayer(@PathVariable("playerId") int playerId) {
         Player player = playerRepository.findPlayerById(playerId);
 
         if (null == player) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        NewPlayerResponseDto newPlayerResponseDto = new NewPlayerResponseDto(player.getId(), player.getBalance());
-        return new ResponseEntity<>(newPlayerResponseDto, HttpStatus.OK);
+        PlayerResponseDto playerResponseDto = new PlayerResponseDto(player.getId(), player.getBalance());
+        return new ResponseEntity<>(playerResponseDto, HttpStatus.OK);
     }
 
-    @PostMapping("/player/{playerId}/balance/update")
+    @PostMapping("/{playerId}/balance/update")
     public ResponseEntity<NewTransactionResponseDto> newTransaction(@PathVariable("playerId") int playerId, @RequestBody NewTransactionRequestDto newTransactionRequestDto) {
 
         double amount = newTransactionRequestDto.getAmount();
